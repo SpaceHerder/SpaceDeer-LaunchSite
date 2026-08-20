@@ -30,6 +30,8 @@
   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
   --image-filter: grayscale(40%);
+
+  --card-border-strong: rgba(255, 255, 255, 0.16);
 }
 
 [data-theme="light"] {
@@ -56,6 +58,8 @@
   --scrollbar-thumb: rgba(15, 23, 42, 0.25);
   --scrollbar-thumb-hover: rgba(15, 23, 42, 0.45);
   --image-filter: grayscale(10%);
+
+  --card-border-strong: rgba(15, 23, 42, 0.3);
 }
 
 *,
@@ -303,14 +307,127 @@ a {
   opacity: 0.95;
 }
 
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-secondary {
+  display: inline-block;
+  padding: 0.9rem 1.8rem;
+  border-radius: 100px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  background: var(--nav-glass-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-border-strong);
+}
+
 .text-highlight {
   color: var(--text-main);
   transition: color 0.3s ease;
 }
 
+/* ─── PRODUCTS ─── */
+.products-section {
+  padding: 6rem 2rem 4rem;
+  position: relative;
+  z-index: 10;
+  background: var(--navy-bg);
+}
+
+.section-lead {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 620px;
+  margin: -2rem 0 3.5rem;
+}
+
+/* Equal columns so both photos render at the same size */
+.product-plates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.plate-deer {
+  --plate-accent: var(--accent-blue);
+  padding-right: 2.75rem;
+  /* Matches the divider the sheep plate carries, so both columns are identical */
+  border-left: 1px solid transparent;
+}
+
+.plate-sheep {
+  --plate-accent: var(--accent-green);
+  border-left: 1px solid var(--card-border);
+  padding-left: 2.75rem;
+}
+
+/* Each plate opens on a keyline in its own colour */
+.plate-head {
+  border-top: 2px solid var(--plate-accent);
+  padding-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.plate-name {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.plate-for {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+.plate-photo {
+  margin: 0 0 1.5rem;
+}
+
+.plate-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border: 1px solid var(--card-border);
+  filter: var(--image-filter);
+  transition: filter 0.5s ease;
+}
+
+.plate:hover .plate-photo img {
+  filter: grayscale(0%);
+}
+
+.plate-photo img {
+  aspect-ratio: 3 / 2;
+}
+
+.plate-lede {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 46ch;
+}
+
 /* ─── CREATIVE BENTO GRID ─── */
 .platform-section {
   padding: 4rem 2rem 8rem;
+  /* products-section supplies the top edge of this stacked block */
   position: relative;
   z-index: 10;
   background: var(--navy-bg);
@@ -580,9 +697,11 @@ a {
 
 /* 3. NDVI Scan Mockup */
 .ui-mockup-scan {
-  width: 100%;
-  height: 100%;
-  position: relative;
+  /* Absolute, not height:100% — the parent only sets min-height, so a
+     percentage height collapses to the data card and the scan covers a third
+     of the image instead of all of it. */
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -641,11 +760,11 @@ a {
 
 @keyframes scan-up-down {
   0% {
-    top: 10%;
+    top: 0;
   }
 
   100% {
-    top: 90%;
+    top: 100%;
   }
 }
 
@@ -851,5 +970,24 @@ a {
 
   .team-grid {
     grid-template-columns: 1fr;
+  }
+
+  .product-plates {
+    grid-template-columns: 1fr;
+  }
+
+  .plate-deer {
+    padding-right: 0;
+    border-left: none;
+  }
+
+  .plate-sheep {
+    border-left: none;
+    padding-left: 0;
+    margin-top: 3.5rem;
+  }
+
+  .section-lead {
+    margin: -1.5rem 0 2.5rem;
   }
 }

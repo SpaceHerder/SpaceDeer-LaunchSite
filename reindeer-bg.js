@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
-   SPACEDEER — Arctic Pastoral Background v4
-   Natural agriculture feel: rolling tundra, grazing reindeer,
+   SPACEHERD — Arctic Pastoral Background v4
+   Natural agriculture feel: rolling tundra, grazing reindeer and sheep,
    gentle snowfall, aurora, warm earthy palette
    ═══════════════════════════════════════════════════════════ */
 
@@ -13,7 +13,8 @@
 
   const stars = [];
   const snowflakes = [];
-  const herds = [];
+  const herds = [];       // individual animals
+  const herdGroups = [];  // the bands they travel in
 
   /* ─── INIT ─── */
   function init() {
@@ -70,31 +71,87 @@
   }
 
   /* ─── HERDS ─── */
+  /* A band is a single-species group. Reindeer travel with reindeer, sheep with
+     sheep. The band owns the position and decides when to walk or stop; members
+     hold a fixed offset from it, so a herd stays a herd instead of drifting into
+     an evenly spaced line. */
   function buildHerds() {
     herds.length = 0;
+    herdGroups.length = 0;
 
-    // Background ridge — small distant silhouettes
-    for (let i = 0; i < 5; i++) {
-      herds.push(makeDeer(0, 0.45 + Math.random() * 0.1, 0.22 + Math.random() * 0.12));
-    }
-    // Midground — medium, walking across pasture
-    for (let i = 0; i < 4; i++) {
-      herds.push(makeDeer(1, 0.7 + Math.random() * 0.15, 0.35 + Math.random() * 0.2));
-    }
-    // Foreground — large, detailed
-    for (let i = 0; i < 3; i++) {
-      herds.push(makeDeer(2, 1.1 + Math.random() * 0.3, 0.6 + Math.random() * 0.3));
+    // ridge, species, count, scale, speed (px/frame), where it starts across the width
+    addBand(0, 'deer',  5, 0.44, 0.09, 0.08);
+    addBand(0, 'sheep', 5, 0.46, 0.07, 0.58);
+    addBand(1, 'deer',  6, 0.72, 0.13, 0.02);
+    addBand(1, 'sheep', 6, 0.74, 0.10, 0.42);
+    addBand(1, 'deer',  4, 0.70, 0.11, 0.80);
+    addBand(2, 'deer',  5, 1.15, 0.20, 0.24);
+    addBand(2, 'sheep', 5, 1.02, 0.16, 0.82);
+  }
+
+  function addBand(ridge, kind, count, scale, speed, startFrac) {
+    const band = {
+      ridge,
+      kind,
+      speed,
+      // Spaced deliberately so no ridge sits empty while a band walks off-screen
+      x: (startFrac + Math.random() * 0.06) * (W || 1920),
+      grazing: Math.random() < 0.4,
+      grazeT: Math.random() * 600 + 300
+    };
+    herdGroups.push(band);
+
+    // Sheep flock tightly; reindeer string out more
+    const spread = (kind === 'sheep' ? 34 : 58) * scale * (1 + count * 0.16);
+
+    for (let i = 0; i < count; i++) {
+      herds.push({
+        kind,
+        ridge,
+        band,
+        // Clustered rather than uniform: squaring a signed random pulls most
+        // members toward the middle of the band and leaves a few stragglers.
+        offset: (function () {
+          const r = Math.random() * 2 - 1;
+          return r * Math.abs(r) * spread;
+        })(),
+        scale: scale * (0.88 + Math.random() * 0.28),
+        walk: Math.random() * Math.PI * 2,
+        grazing: false,
+        headT: Math.random() * 260 + 90
+      });
     }
   }
 
-  function makeDeer(ridge, scale, speed) {
-    return {
-      ridge, scale, speed,
-      x: Math.random() * (W || 1920),
-      walk: Math.random() * Math.PI * 2,
-      grazing: false,
-      grazeT: Math.random() * 500 + 250
-    };
+  /* ─── HERD MOTION ─── */
+  function updateHerds() {
+    herdGroups.forEach(b => {
+      b.grazeT--;
+      if (b.grazeT <= 0) {
+        b.grazing = !b.grazing;
+        // Long grazing stops, longer walks — the whole band moves together
+        b.grazeT = b.grazing ? 420 + Math.random() * 600 : 900 + Math.random() * 900;
+      }
+
+      if (!b.grazing) b.x += b.speed;
+      if (b.x > W + 260) b.x = -260;
+    });
+
+    herds.forEach(d => {
+      if (!d.band.grazing) {
+        // Stride rate scales with speed and inversely with size
+        const gait = (d.kind === 'sheep' ? 0.16 : 0.11) * d.band.speed / d.scale;
+        d.walk += gait;
+        d.grazing = false;
+      } else {
+        // Standing still: heads go up and down independently
+        d.headT--;
+        if (d.headT <= 0) {
+          d.grazing = !d.grazing;
+          d.headT = d.grazing ? 150 + Math.random() * 320 : 90 + Math.random() * 200;
+        }
+      }
+    });
   }
 
   /* ─── TERRAIN ─── */
@@ -114,6 +171,8 @@
     ctx.clearRect(0, 0, W, H);
     const light = isLightMode();
 
+    updateHerds();
+
     drawSky(light);
     if (!light) {
       drawAurora();
@@ -121,7 +180,7 @@
     } else {
       drawSunGlow();
     }
-    // Satellite orbit
+    // Satellite pass
     drawSatelliteOrbit(light);
 
     // Distant mountains
@@ -183,7 +242,7 @@
     ctx.fillRect(0, 0, W, H);
   }
 
-  /* ─── SATELLITE ORBIT ─── */
+  /* ─── SATELLITE PASS ─── */
   function drawSatelliteOrbit(light) {
     ctx.save();
 
@@ -192,42 +251,39 @@
     ctx.rect(0, 0, W, H * 0.52);
     ctx.clip();
 
-    // Orbit ellipse: wide and gently tilted across the upper sky
-    const cx    = W * 0.5;
-    const cy    = H * 0.14;
-    const rx    = W * 0.44;   // horizontal radius
-    const ry    = H * 0.085;  // vertical radius
-    const tilt  = -0.12;      // slight CCW tilt in radians
+    // Flight path: a shallow arc across the sky. The satellite travels from one
+    // edge to the other and re-enters on the opposite side — it never loops back
+    // over the herd.
+    const margin = 60;                 // off-screen lead-in / lead-out
+    const span   = W + margin * 2;     // total travel distance per pass
+    const baseY  = H * 0.16;           // altitude at the screen edges
+    const arc    = H * 0.05;           // how much higher it rides mid-sky
 
-    // Helper: get canvas x,y for a given orbit angle
-    function orbitPt(a) {
-      const lx = Math.cos(a) * rx;
-      const ly = Math.sin(a) * ry;
-      return {
-        x: cx + lx * Math.cos(tilt) - ly * Math.sin(tilt),
-        y: cy + lx * Math.sin(tilt) + ly * Math.cos(tilt)
-      };
+    // Height for a given x — matches at both edges so the wrap is seamless
+    function pathY(x) {
+      const t = Math.max(0, Math.min(1, x / (W || 1)));
+      return baseY - Math.sin(t * Math.PI) * arc;
     }
 
-    // Satellite angle (slow orbit, ~25 sec per lap)
-    const satAngle = (time * 0.25) % (Math.PI * 2);
+    // Satellite x (slow pass, ~28 sec edge to edge)
+    const satX = ((time * (span / 28)) % span) - margin;
+    const satY = pathY(satX);
 
-    // ── Full orbit path (faint dashed ring) ──
+    // ── Flight path (faint dashed line across the sky) ──
     ctx.beginPath();
-    for (let i = 0; i <= 360; i++) {
-      const p = orbitPt((i / 360) * Math.PI * 2);
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
+    for (let i = 0; i <= 120; i++) {
+      const x = -margin + (i / 120) * span;
+      if (i === 0) ctx.moveTo(x, pathY(x));
+      else ctx.lineTo(x, pathY(x));
     }
-    ctx.closePath();
     ctx.strokeStyle = light ? 'rgba(20, 70, 120, 0.12)' : 'rgba(56, 189, 248, 0.1)';
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 10]);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // ── Glowing trail (segments with fading alpha behind satellite) ──
-    const trailLen   = Math.PI * 0.5;
+    // ── Glowing trail (fades out behind the satellite, cut off at the edge) ──
+    const trailLen   = W * 0.22;
     const trailSteps = 50;
     const trailRGB   = light ? '3, 105, 161' : '56, 189, 248';
     const trailMax   = light ? 0.22 : 0.38;
@@ -235,21 +291,20 @@
     for (let i = 0; i < trailSteps - 1; i++) {
       const frac0 = i / trailSteps;
       const frac1 = (i + 1) / trailSteps;
-      const a0 = satAngle - trailLen + trailLen * frac0;
-      const a1 = satAngle - trailLen + trailLen * frac1;
-      const p0 = orbitPt(a0);
-      const p1 = orbitPt(a1);
+      const x0 = satX - trailLen + trailLen * frac0;
+      const x1 = satX - trailLen + trailLen * frac1;
+      // Don't draw trail that would have come from before the entry point
+      if (x1 < -margin) continue;
       ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.lineTo(p1.x, p1.y);
+      ctx.moveTo(x0, pathY(x0));
+      ctx.lineTo(x1, pathY(x1));
       ctx.strokeStyle = `rgba(${trailRGB}, ${frac1 * trailMax})`;
       ctx.lineWidth = 1.5 + frac1;
       ctx.stroke();
     }
 
     // ── Satellite body ──
-    const sat = orbitPt(satAngle);
-    const sx = sat.x, sy = sat.y;
+    const sx = satX, sy = satY;
 
     // Signal beam (cone pointing toward tundra below)
     const beamLen = Math.min(H * 0.38, 160);
@@ -489,22 +544,20 @@
 
   /* ─── HERD ─── */
   function drawHerd(ridge, light) {
-    herds.forEach(d => {
-      if (d.ridge !== ridge) return;
+    // Back to front so animals further along the slope overlap correctly
+    const layer = herds
+      .filter(d => d.ridge === ridge)
+      .sort((a, b) => (a.band.x + a.offset) - (b.band.x + b.offset));
 
-      if (!d.grazing) {
-        d.x += d.speed;
-        d.walk += 0.055 * d.speed;
-        if (d.x > W + 100) d.x = -100;
+    layer.forEach(d => {
+      const x = d.band.x + d.offset;
+      const y = ridgeY(x, d.ridge);
+
+      if (d.kind === 'sheep') {
+        drawSheep(x, y, d, ridge, light);
+      } else {
+        drawDeer(x, y, d, ridge, light);
       }
-
-      d.grazeT--;
-      if (d.grazeT <= 0) {
-        d.grazing = !d.grazing;
-        d.grazeT = d.grazing ? 180 + Math.random() * 300 : 350 + Math.random() * 500;
-      }
-
-      drawDeer(d.x, ridgeY(d.x, d.ridge), d, ridge, light);
     });
   }
 
@@ -674,6 +727,125 @@
       ctx.arc(fx, fy, 2, 0, Math.PI * 2);
       ctx.fill();
     });
+
+    ctx.restore();
+  }
+
+  /* ─── WOOLLY SHEEP SILHOUETTE ─── */
+  function drawSheep(x, y, d, ridge, light) {
+    ctx.save();
+    ctx.translate(x, y);
+    const s = d.scale * 0.72;   // sheep stand shorter than the reindeer
+    ctx.scale(s, s);
+
+    const walk = d.grazing ? 0 : d.walk;
+    const bW = 26, backY = -20;
+    const leg = 13;
+
+    // Quadruped gait — shorter, quicker stride than a reindeer
+    const fl = Math.sin(walk) * 0.3;
+    const fr = Math.sin(walk + Math.PI) * 0.3;
+    const bl = Math.sin(walk + Math.PI * 0.55) * 0.27;
+    const br = Math.sin(walk + Math.PI * 1.55) * 0.27;
+
+    // Colors — per layer depth & theme
+    let woolColor, woolShade, faceColor;
+    if (light) {
+      if (ridge === 0) {
+        woolColor = '#7C8CA0'; woolShade = '#64748B'; faceColor = '#334155';
+      } else if (ridge === 1) {
+        woolColor = '#5A6B80'; woolShade = '#475569'; faceColor = '#1E293B';
+      } else {
+        woolColor = '#44546A'; woolShade = '#334155'; faceColor = '#0F172A';
+      }
+    } else {
+      if (ridge === 0) {
+        woolColor = '#3c5044'; woolShade = '#2c3d34'; faceColor = '#1f2e26';
+      } else if (ridge === 1) {
+        woolColor = '#56705e'; woolShade = '#42594b'; faceColor = '#2d4237';
+      } else {
+        woolColor = '#708c78'; woolShade = '#587062'; faceColor = '#3a5446';
+      }
+    }
+
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // --- Far legs (darker) ---
+    ctx.strokeStyle = faceColor;
+    ctx.lineWidth = 2.6;
+    drawLeg(-bW * 0.28, backY + 8, br, leg);
+    drawLeg(bW * 0.26, backY + 8, fr, leg);
+
+    // --- Woolly body: base ellipse plus fluff bumps around the top edge ---
+    ctx.fillStyle = woolColor;
+    ctx.beginPath();
+    ctx.ellipse(0, backY + 6, bW * 0.5, 8.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const fluff = [
+      [-11, -3, 5], [-6, -6, 5.5], [0, -7, 5.5], [6, -6, 5.5],
+      [11, -3, 5], [12, 2, 4.5], [-12, 2, 4.5]
+    ];
+    fluff.forEach(f => {
+      ctx.beginPath();
+      ctx.arc(f[0], backY + 6 + f[1], f[2], 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Shaded underside
+    ctx.fillStyle = woolShade;
+    ctx.beginPath();
+    ctx.ellipse(0, backY + 11, bW * 0.38, 3.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- Short tail tuft ---
+    ctx.fillStyle = woolColor;
+    ctx.beginPath();
+    ctx.arc(-bW * 0.52, backY + 4, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- Head & neck (dark face, no antlers) ---
+    const hdX = d.grazing ? bW * 0.52 : bW * 0.56;
+    const hdY = d.grazing ? backY + 17 : backY + 1;
+
+    ctx.strokeStyle = faceColor;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(bW * 0.32, backY + 4);
+    ctx.lineTo(hdX - 1, hdY);
+    ctx.stroke();
+
+    ctx.fillStyle = faceColor;
+    ctx.beginPath();
+    ctx.ellipse(hdX, hdY, 5.5, 3.6, d.grazing ? 0.9 : 0.25, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Woolly forehead tuft
+    ctx.fillStyle = woolColor;
+    ctx.beginPath();
+    ctx.arc(hdX - 3.5, hdY - 2.5, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(hdX + 0.5, hdY - 0.8, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Drooping ears
+    ctx.strokeStyle = faceColor;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(hdX - 3, hdY - 1);
+    ctx.quadraticCurveTo(hdX - 7, hdY + 1, hdX - 8, hdY + 4);
+    ctx.stroke();
+
+    // --- Near legs (lighter) ---
+    ctx.strokeStyle = woolShade;
+    ctx.lineWidth = 2.6;
+    drawLeg(-bW * 0.28, backY + 8, bl, leg);
+    drawLeg(bW * 0.26, backY + 8, fl, leg);
 
     ctx.restore();
   }

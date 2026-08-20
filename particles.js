@@ -198,7 +198,7 @@
 
   function createConstellation() {
     const reindeerPoints = createReindeerPoints();
-    const textPoints = createTextPoints('SpaceDeer');
+    const textPoints = createTextPoints('SpaceHerd');
     const totalParticles = reindeerPoints.length + textPoints.length;
 
     particleData = [];
