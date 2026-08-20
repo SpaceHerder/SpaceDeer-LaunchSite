@@ -113,15 +113,11 @@ a {
 
 /* ─── AGRITECH ANIMATED BACKGROUND ─── */
 .hero-background {
-  position: fixed;      /* stays locked to viewport on scroll & resize */
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  /* lvh is the tallest the visible viewport ever gets on a phone, so the scene
-     still covers the screen once the URL bar slides away. Unlike dvh it does
-     not change while scrolling, so the canvas is never reallocated mid-scroll. */
-  height: 100lvh;
+  position: fixed;
+  /* inset:0 pins this to the viewport itself rather than to a viewport unit, so
+     it covers the screen edge to edge whatever the URL bar is doing. Every unit
+     we tried (vh, svh, lvh) described only one of the URL bar states. */
+  inset: 0;
   z-index: -1;
   overflow: hidden;
   background-color: var(--navy-bg);
@@ -273,10 +269,9 @@ a {
 .hero {
   position: relative;
   min-height: 100vh;
-  /* Must match .hero-background exactly. With svh here the section ended sooner
-     than the scene behind it, so the next section crept up the screen as soon
-     as the URL bar collapsed and the hero stopped filling the phone. */
-  min-height: 100lvh;
+  /* dvh tracks the visible viewport as the URL bar moves, so the section always
+     ends exactly where the screen does and the next section never creeps up. */
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   max-width: 1200px;

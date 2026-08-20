@@ -11,13 +11,6 @@
   let W, H;
   let time = 0;
 
-  // The scene is decorative, so it stops animating while a scroll is in flight.
-  // Drawing a full-screen canvas competes with the browser for the main thread
-  // at exactly the moment it is trying to scroll, which is what made the herds
-  // stutter on a phone.
-  let scrolling = false;
-  let scrollIdle = null;
-
   const stars = [];
   const snowflakes = [];
   const herds = [];       // individual animals
@@ -31,12 +24,6 @@
 
     resize();
     window.addEventListener('resize', resize);
-
-    window.addEventListener('scroll', () => {
-      scrolling = true;
-      clearTimeout(scrollIdle);
-      scrollIdle = setTimeout(() => { scrolling = false; }, 160);
-    }, { passive: true });
 
     // Fewer particles on a phone, where the fill cost actually matters
     const small = W < 768;
@@ -199,6 +186,105 @@
     return H * 0.87 + Math.sin(x * 0.0012 - 0.9) * 30 + Math.cos(x * 0.0028) * 18;
   }
 
+  /* ─── STATIC GEOMETRY CACHE ─── */
+  /* The sky gradient, the mountain silhouette, the three ridge fills and the
+     grass roots only change when the canvas size or the theme changes. Rebuilding
+     all of that from scratch on every frame was most of the per-frame cost, and
+     it is why the scene struggled to keep up on a phone. */
+  let cache = null;
+
+  function mountainY(x) {
+    return H * 0.44
+      + Math.sin(x * 0.001 + 1.2) * 60
+      + Math.cos(x * 0.003 + 0.5) * 30
+      + Math.sin(x * 0.007) * 12;
+  }
+
+  function buildCache(light) {
+    // Sky
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    if (light) {
+      sky.addColorStop(0, '#A8BCCE');
+      sky.addColorStop(0.35, '#BACCDC');
+      sky.addColorStop(0.7, '#C8D6E5');
+      sky.addColorStop(1, '#C8D6E5');
+    } else {
+      sky.addColorStop(0, '#0a0e14');
+      sky.addColorStop(0.25, '#0f1820');
+      sky.addColorStop(0.45, '#162030');
+      sky.addColorStop(0.6, '#1a2a28');
+      sky.addColorStop(1, '#1a2b24');
+    }
+
+    // Mountain silhouette and its snow caps
+    const mountain = new Path2D();
+    mountain.moveTo(0, H);
+    for (let x = -5; x <= W + 5; x += 8) mountain.lineTo(x, mountainY(x));
+    mountain.lineTo(W + 5, H);
+    mountain.closePath();
+
+    const caps = new Path2D();
+    for (let x = -5; x <= W + 5; x += 8) {
+      if (x === -5) caps.moveTo(x, mountainY(x));
+      else caps.lineTo(x, mountainY(x));
+    }
+    for (let x = W + 5; x >= -5; x -= 8) {
+      caps.lineTo(x, mountainY(x) - 6 - Math.max(0, Math.sin(x * 0.005)) * 8);
+    }
+    caps.closePath();
+
+    const mountainGrad = ctx.createLinearGradient(0, H * 0.3, 0, H * 0.6);
+    if (light) {
+      mountainGrad.addColorStop(0, '#6A8AA5');
+      mountainGrad.addColorStop(1, '#8FA8BF');
+    } else {
+      mountainGrad.addColorStop(0, '#141f1c');
+      mountainGrad.addColorStop(1, '#0f1a16');
+    }
+
+    // Ridge fills
+    const palette = light
+      ? [['#8FA8BF', '#7A96AE'], ['#A8BCCE', '#8FA8BF'], ['#BACCDC', '#A8BCCE']]
+      : [['#1a2b24', '#12201a'], ['#1e3328', '#152a1f'], ['#243d2e', '#1a3024']];
+
+    const hills = [];
+    const hillGrads = [];
+    for (let r = 0; r < 3; r++) {
+      const path = new Path2D();
+      path.moveTo(0, H);
+      for (let x = -5; x <= W + 5; x += 8) path.lineTo(x, ridgeY(x, r));
+      path.lineTo(W + 5, H);
+      path.closePath();
+      hills.push(path);
+
+      const g = ctx.createLinearGradient(0, H * 0.4, 0, H);
+      g.addColorStop(0, palette[r][0]);
+      g.addColorStop(1, palette[r][1]);
+      hillGrads.push(g);
+    }
+
+    // Grass roots. Only the sway stays live, and that is a couple of sines.
+    const grass = [];
+    for (let r = 0; r < 3; r++) {
+      const base = r === 2 ? 6 : r === 1 ? 10 : 16;
+      const spacing = W < 768 ? base * 1.8 : base;
+      const count = Math.floor(W / spacing);
+      const blades = [];
+      for (let i = 0; i < count; i++) {
+        const bx = i * spacing + Math.sin(i * 3.7) * 3;
+        const by = ridgeY(bx, r);
+        if (by > H) continue;
+        blades.push({
+          bx, by,
+          h: (r === 2 ? 8 : r === 1 ? 5 : 3) + Math.sin(i * 2.3) * 2
+        });
+      }
+      grass.push(blades);
+    }
+
+    cache = { light, w: W, h: H, sky, mountain, caps, mountainGrad, hills, hillGrads, grass };
+  }
+
   /* ─── LOOP ─── */
   function isLightMode() {
     return document.documentElement.getAttribute('data-theme') === 'light';
@@ -210,15 +296,19 @@
     // Every section below the hero has an opaque background, so once the hero is
     // scrolled past there is nothing to see. Skipping the frame entirely is the
     // difference between a smooth scroll and a stuttering one on a phone.
-    if (document.hidden || scrolling || window.scrollY > H + 100) return;
+    if (document.hidden || window.scrollY > H + 100) return;
 
     time += 1 / 60;
     ctx.clearRect(0, 0, W, H);
     const light = isLightMode();
 
+    if (!cache || cache.light !== light || cache.w !== W || cache.h !== H) {
+      buildCache(light);
+    }
+
     updateHerds();
 
-    drawSky(light);
+    drawSky();
     if (!light) {
       drawAurora();
       drawStars();
@@ -232,11 +322,7 @@
     drawMountains(light);
 
     // Layer 0 — far pasture
-    if (light) {
-      drawHillFill(0, '#8FA8BF', '#7A96AE');
-    } else {
-      drawHillFill(0, '#1a2b24', '#12201a');
-    }
+    drawHillFill(0);
     drawGrassTexture(0, light);
     drawHerd(0, light);
 
@@ -244,22 +330,14 @@
     drawMist(H * 0.58, light ? 0.15 : 0.08, light);
 
     // Layer 1 — mid pasture
-    if (light) {
-      drawHillFill(1, '#A8BCCE', '#8FA8BF');
-    } else {
-      drawHillFill(1, '#1e3328', '#152a1f');
-    }
+    drawHillFill(1);
     drawGrassTexture(1, light);
     drawHerd(1, light);
 
     drawMist(H * 0.72, light ? 0.12 : 0.06, light);
 
     // Layer 2 — foreground
-    if (light) {
-      drawHillFill(2, '#BACCDC', '#A8BCCE');
-    } else {
-      drawHillFill(2, '#243d2e', '#1a3024');
-    }
+    drawHillFill(2);
     drawGrassTexture(2, light);
     drawHerd(2, light);
 
@@ -267,21 +345,8 @@
   }
 
   /* ─── SKY ─── */
-  function drawSky(light) {
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    if (light) {
-      g.addColorStop(0, '#A8BCCE');
-      g.addColorStop(0.35, '#BACCDC');
-      g.addColorStop(0.7, '#C8D6E5');
-      g.addColorStop(1, '#C8D6E5');
-    } else {
-      g.addColorStop(0, '#0a0e14');
-      g.addColorStop(0.25, '#0f1820');
-      g.addColorStop(0.45, '#162030');
-      g.addColorStop(0.6, '#1a2a28');
-      g.addColorStop(1, '#1a2b24');
-    }
-    ctx.fillStyle = g;
+  function drawSky() {
+    ctx.fillStyle = cache.sky;
     ctx.fillRect(0, 0, W, H);
   }
 
@@ -481,95 +546,35 @@
 
   /* ─── DISTANT MOUNTAINS ─── */
   function drawMountains(light) {
-    ctx.save();
-    // Far mountain range silhouette
-    ctx.beginPath();
-    ctx.moveTo(0, H);
-    for (let x = -5; x <= W + 5; x += 8) {
-      const y = H * 0.44
-        + Math.sin(x * 0.001 + 1.2) * 60
-        + Math.cos(x * 0.003 + 0.5) * 30
-        + Math.sin(x * 0.007) * 12;
-      ctx.lineTo(x, y);
-    }
-    ctx.lineTo(W + 5, H);
-    ctx.closePath();
-    const mg = ctx.createLinearGradient(0, H * 0.3, 0, H * 0.6);
-    if (light) {
-      mg.addColorStop(0, '#6A8AA5');
-      mg.addColorStop(1, '#8FA8BF');
-    } else {
-      mg.addColorStop(0, '#141f1c');
-      mg.addColorStop(1, '#0f1a16');
-    }
-    ctx.fillStyle = mg;
-    ctx.fill();
-
-    // Snow caps
-    ctx.beginPath();
-    for (let x = -5; x <= W + 5; x += 8) {
-      const baseY = H * 0.44
-        + Math.sin(x * 0.001 + 1.2) * 60
-        + Math.cos(x * 0.003 + 0.5) * 30
-        + Math.sin(x * 0.007) * 12;
-      if (x === -5) ctx.moveTo(x, baseY);
-      else ctx.lineTo(x, baseY);
-    }
-    for (let x = W + 5; x >= -5; x -= 8) {
-      const baseY = H * 0.44
-        + Math.sin(x * 0.001 + 1.2) * 60
-        + Math.cos(x * 0.003 + 0.5) * 30
-        + Math.sin(x * 0.007) * 12;
-      ctx.lineTo(x, baseY - 6 - Math.max(0, Math.sin(x * 0.005)) * 8);
-    }
-    ctx.closePath();
+    ctx.fillStyle = cache.mountainGrad;
+    ctx.fill(cache.mountain);
     ctx.fillStyle = light ? 'rgba(255, 255, 255, 0.7)' : 'rgba(200, 210, 220, 0.08)';
-    ctx.fill();
-
-    ctx.restore();
+    ctx.fill(cache.caps);
   }
 
   /* ─── HILL / PASTURE FILL ─── */
-  function drawHillFill(ridge, c1, c2) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(0, H);
-    for (let x = -5; x <= W + 5; x += 8) ctx.lineTo(x, ridgeY(x, ridge));
-    ctx.lineTo(W + 5, H);
-    ctx.closePath();
-    const g = ctx.createLinearGradient(0, H * 0.4, 0, H);
-    g.addColorStop(0, c1);
-    g.addColorStop(1, c2);
-    ctx.fillStyle = g;
-    ctx.fill();
-    ctx.restore();
+  function drawHillFill(ridge) {
+    ctx.fillStyle = cache.hillGrads[ridge];
+    ctx.fill(cache.hills[ridge]);
   }
 
   /* ─── GRASS TEXTURE — subtle organic lines ─── */
   function drawGrassTexture(ridge, light) {
-    ctx.save();
-    const base = ridge === 2 ? 6 : ridge === 1 ? 10 : 16;
-    const spacing = W < 768 ? base * 1.8 : base;
-    const grassCount = Math.floor(W / spacing);
+    const blades = cache.grass[ridge];
+    const alpha = ridge === 2 ? 0.18 : ridge === 1 ? 0.12 : 0.07;
+
     ctx.lineWidth = 0.6;
+    ctx.strokeStyle = light ? `rgba(71, 85, 105, ${alpha * 1.2})` : `rgba(90, 140, 100, ${alpha})`;
 
-    for (let i = 0; i < grassCount; i++) {
-      const bx = i * spacing + Math.sin(i * 3.7) * 3;
-      const by = ridgeY(bx, ridge);
-
-      if (by > H) continue;
-
-      const grassH = (ridge === 2 ? 8 : ridge === 1 ? 5 : 3) + Math.sin(i * 2.3) * 2;
-      const windSway = Math.sin(time * 1.5 + bx * 0.01) * 2;
-
-      const alpha = ridge === 2 ? 0.18 : ridge === 1 ? 0.12 : 0.07;
-      ctx.strokeStyle = light ? `rgba(71, 85, 105, ${alpha * 1.2})` : `rgba(90, 140, 100, ${alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(bx, by);
-      ctx.quadraticCurveTo(bx + windSway, by - grassH * 0.6, bx + windSway * 1.5, by - grassH);
-      ctx.stroke();
+    // One path for the whole layer instead of a stroke call per blade
+    ctx.beginPath();
+    for (let i = 0; i < blades.length; i++) {
+      const b = blades[i];
+      const sway = Math.sin(time * 1.5 + b.bx * 0.01) * 2;
+      ctx.moveTo(b.bx, b.by);
+      ctx.quadraticCurveTo(b.bx + sway, b.by - b.h * 0.6, b.bx + sway * 1.5, b.by - b.h);
     }
-    ctx.restore();
+    ctx.stroke();
   }
 
   /* ─── MIST / FOG LAYERS ─── */
