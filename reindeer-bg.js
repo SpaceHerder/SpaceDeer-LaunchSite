@@ -11,6 +11,13 @@
   let W, H;
   let time = 0;
 
+  // The scene is decorative, so it stops animating while a scroll is in flight.
+  // Drawing a full-screen canvas competes with the browser for the main thread
+  // at exactly the moment it is trying to scroll, which is what made the herds
+  // stutter on a phone.
+  let scrolling = false;
+  let scrollIdle = null;
+
   const stars = [];
   const snowflakes = [];
   const herds = [];       // individual animals
@@ -25,8 +32,17 @@
     resize();
     window.addEventListener('resize', resize);
 
+    window.addEventListener('scroll', () => {
+      scrolling = true;
+      clearTimeout(scrollIdle);
+      scrollIdle = setTimeout(() => { scrolling = false; }, 160);
+    }, { passive: true });
+
+    // Fewer particles on a phone, where the fill cost actually matters
+    const small = W < 768;
+
     // Stars — warm tinted
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < (small ? 45 : 90); i++) {
       stars.push({
         x: Math.random(),
         y: Math.random() * 0.45,
@@ -37,7 +53,7 @@
     }
 
     // Gentle snowfall
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < (small ? 30 : 70); i++) {
       snowflakes.push({
         x: Math.random(),
         y: Math.random(),
@@ -194,7 +210,7 @@
     // Every section below the hero has an opaque background, so once the hero is
     // scrolled past there is nothing to see. Skipping the frame entirely is the
     // difference between a smooth scroll and a stuttering one on a phone.
-    if (document.hidden || window.scrollY > H + 100) return;
+    if (document.hidden || scrolling || window.scrollY > H + 100) return;
 
     time += 1 / 60;
     ctx.clearRect(0, 0, W, H);
@@ -532,7 +548,8 @@
   /* ─── GRASS TEXTURE — subtle organic lines ─── */
   function drawGrassTexture(ridge, light) {
     ctx.save();
-    const spacing = ridge === 2 ? 6 : ridge === 1 ? 10 : 16;
+    const base = ridge === 2 ? 6 : ridge === 1 ? 10 : 16;
+    const spacing = W < 768 ? base * 1.8 : base;
     const grassCount = Math.floor(W / spacing);
     ctx.lineWidth = 0.6;
 

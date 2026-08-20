@@ -118,6 +118,10 @@ a {
   left: 0;
   width: 100vw;
   height: 100vh;
+  /* lvh is the tallest the visible viewport ever gets on a phone, so the scene
+     still covers the screen once the URL bar slides away. Unlike dvh it does
+     not change while scrolling, so the canvas is never reallocated mid-scroll. */
+  height: 100lvh;
   z-index: -1;
   overflow: hidden;
   background-color: var(--navy-bg);
@@ -132,6 +136,11 @@ a {
   height: 100%;
   display: block;
   z-index: 1;
+  /* Keep the canvas on its own compositor layer so scrolling the page never
+     forces it to repaint. translateZ(0) alone gets flattened back to a 2D
+     transform by some engines, so declare the intent directly as well. */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .hero-overlay {
@@ -264,9 +273,10 @@ a {
 .hero {
   position: relative;
   min-height: 100vh;
-  /* svh tracks the visible viewport on iOS, so the hero is not cut off by the
-     browser chrome the way 100vh alone can be. */
-  min-height: 100svh;
+  /* Must match .hero-background exactly. With svh here the section ended sooner
+     than the scene behind it, so the next section crept up the screen as soon
+     as the URL bar collapsed and the hero stopped filling the phone. */
+  min-height: 100lvh;
   display: flex;
   align-items: center;
   max-width: 1200px;
@@ -929,5 +939,21 @@ a {
 
   .section-lead {
     margin: -1.5rem 0 2.5rem;
+  }
+
+  /* backdrop-filter over the animated canvas forces the browser to re-blur
+     what is behind it on every frame, which stutters badly while scrolling. */
+  .nav-glass,
+  .theme-toggle-btn,
+  .btn-secondary,
+  .ui-status-pill,
+  .scan-data-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .theme-toggle-btn,
+  .btn-secondary {
+    background: var(--pill-bg);
   }
 }
