@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   BOREALTRACK — Space-Tech Minimalism
+   BOREALTRACK: Space-Tech Minimalism
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -150,6 +150,11 @@ a {
   width: 100%;
   z-index: 100;
   padding: 1.5rem 2rem;
+  /* Clear the notch / Dynamic Island. env() is 0 on everything else, so this
+     costs nothing on other devices. */
+  padding-top: calc(1.5rem + env(safe-area-inset-top));
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
 }
 
 .header-inner {
@@ -259,11 +264,16 @@ a {
 .hero {
   position: relative;
   min-height: 100vh;
+  /* svh tracks the visible viewport on iOS, so the hero is not cut off by the
+     browser chrome the way 100vh alone can be. */
+  min-height: 100svh;
   display: flex;
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
 }
 
 .hero-content {
@@ -343,6 +353,8 @@ a {
   position: relative;
   z-index: 10;
   background: var(--navy-bg);
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
 }
 
 .section-lead {
@@ -431,6 +443,8 @@ a {
   position: relative;
   z-index: 10;
   background: var(--navy-bg);
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
 }
 
 .section-inner {
@@ -497,19 +511,15 @@ a {
   min-height: 300px;
 }
 
-.centered-visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* ─── UI BACKGROUND IMAGES (No Tint) ─── */
 .bg-map {
   background: url('nord-norge-sat.jpg') center/cover;
 }
 
 .bg-route {
-  background: url('satelitt.jpg') center/cover;
+  /* Cropped from satelitt.jpg. The original is a chart export whose white
+     title bar, margins and legend box showed through this narrow crop. */
+  background: url('satelitt-rute.jpg') center/cover;
 }
 
 .bg-scan {
@@ -618,86 +628,9 @@ a {
   }
 }
 
-/* 2. Routing Mockup */
-.ui-mockup-route {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.route-node {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--navy-surface);
-  border: 2px solid var(--text-muted);
-  position: relative;
-  z-index: 2;
-}
-
-.route-node.current {
-  border-color: var(--accent-green);
-  background: var(--accent-green);
-}
-
-.route-node.future {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: transparent;
-  border-style: dashed;
-}
-
-.ping-ring {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 22px;
-  height: 22px;
-  border: 1px solid var(--accent-green);
-  border-radius: 50%;
-  animation: pulse-ring 2s infinite;
-}
-
-.route-line {
-  width: 2px;
-  height: 40px;
-  background: var(--text-muted);
-}
-
-.route-line.future {
-  background: transparent;
-  border-left: 2px dashed rgba(255, 255, 255, 0.2);
-}
-
-.ui-label {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 1.5rem;
-  background: var(--label-bg);
-  border: 1px solid var(--card-border);
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.5);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
 /* 3. NDVI Scan Mockup */
 .ui-mockup-scan {
-  /* Absolute, not height:100% — the parent only sets min-height, so a
+  /* Absolute, not height:100%. The parent only sets min-height, so a
      percentage height collapses to the data card and the scan covers a third
      of the image instead of all of it. */
   position: absolute;
@@ -774,6 +707,8 @@ a {
   position: relative;
   z-index: 10;
   background: var(--navy-bg);
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
 }
 
 .content-split {
@@ -831,6 +766,8 @@ a {
   position: relative;
   z-index: 10;
   background: var(--navy-bg);
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
 }
 
 .team-header {
@@ -916,6 +853,9 @@ a {
   background: var(--navy-bg);
   position: relative;
   z-index: 10;
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
+  padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
 }
 
 .footer-inner {

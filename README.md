@@ -1,4 +1,4 @@
-# SpaceHerd — Satellite Intelligence for Arctic Herds
+# SpaceHerd: Satellite Intelligence for Arctic Herds
 
 ![SpaceHerd](satelitt.jpg)
 
@@ -17,7 +17,7 @@ SpaceHerd sells two separate products. Both work from Earth-observation imagery,
 
 - **Hardware-Free Herd Monitoring**: High-resolution satellite landscape intelligence that eliminates the need for expensive physical GPS collars or bells on every animal.
 - **Predictive Trajectory Routing**: Combines historical Arctic migration and grazing patterns with real-time terrain data to anticipate herd movement.
-- **Actionable Earth Observation**: Daily vegetation (NDVI) and snow-cover analysis — lichen beneath the winter crust for reindeer, summer rangeland recovery for sheep.
+- **Actionable Earth Observation**: Daily vegetation (NDVI) and snow-cover analysis. Lichen beneath the winter crust for reindeer, summer rangeland recovery for sheep.
 - **Interactive Telemetry Dashboard**: Rich visual experience powered by dynamic HTML5 Canvas herd simulations and GSAP interactive animations.
 
 ---

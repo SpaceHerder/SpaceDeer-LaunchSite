@@ -55,19 +55,41 @@
 
   /* ─── RESIZE ─── */
   let resizeTimer = null;
+  let lastW = 0, lastH = 0;
+
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
+    // Measure the container rather than window.innerHeight. On a phone the URL
+    // bar slides away as you scroll, which changes innerHeight and fires resize
+    // repeatedly mid-scroll — reallocating the canvas and teleporting every
+    // herd. The container is sized in vh, which does not move with the URL bar.
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+
+    if (w === lastW && h === lastH) return;
+
+    const widthChanged = w !== lastW;
+    lastW = w;
+    lastH = h;
+    W = w;
+    H = h;
+
+    // Phones commonly report devicePixelRatio 3. Capping lower cuts the number
+    // of pixels filled per frame by more than half, which is what makes this
+    // scene expensive while scrolling, at no visible cost for shapes this soft.
+    const dpr = Math.min(window.devicePixelRatio || 1, w < 768 ? 1.5 : 2);
     canvas.width  = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     canvas.style.width  = W + 'px';
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Rebuild herd positions to match new canvas width
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(buildHerds, 150);
+    // Herds are laid out across the width, so only a width change needs them
+    // rebuilt. Height-only changes leave the bands where they are.
+    if (widthChanged) {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(buildHerds, 150);
+    }
   }
 
   /* ─── HERDS ─── */
@@ -167,6 +189,13 @@
   }
 
   function loop() {
+    requestAnimationFrame(loop);
+
+    // Every section below the hero has an opaque background, so once the hero is
+    // scrolled past there is nothing to see. Skipping the frame entirely is the
+    // difference between a smooth scroll and a stuttering one on a phone.
+    if (document.hidden || window.scrollY > H + 100) return;
+
     time += 1 / 60;
     ctx.clearRect(0, 0, W, H);
     const light = isLightMode();
@@ -219,8 +248,6 @@
     drawHerd(2, light);
 
     drawSnowfall(light);
-
-    requestAnimationFrame(loop);
   }
 
   /* ─── SKY ─── */
