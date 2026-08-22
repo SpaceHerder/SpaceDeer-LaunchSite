@@ -11,7 +11,6 @@
 
   --card-bg: rgba(255, 255, 255, 0.02);
   --card-border: rgba(255, 255, 255, 0.06);
-  --card-radius: 24px;
 
   --accent-blue: #38BDF8;
   --accent-green: #34D399;
@@ -25,13 +24,12 @@
   --btn-primary-bg: linear-gradient(135deg, #FFFFFF 0%, #E0E5EA 100%);
   --btn-primary-text: #060B11;
   --pill-bg: rgba(10, 17, 26, 0.8);
-  --scan-card-bg: rgba(10, 17, 26, 0.8);
-  --label-bg: rgba(6, 11, 17, 0.7);
   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
   --image-filter: grayscale(40%);
 
   --card-border-strong: rgba(255, 255, 255, 0.16);
+  --header-bg: rgba(6, 11, 17, 0.92);
 }
 
 [data-theme="light"] {
@@ -53,13 +51,12 @@
   --btn-primary-bg: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
   --btn-primary-text: #FFFFFF;
   --pill-bg: rgba(210, 225, 240, 0.9);
-  --scan-card-bg: rgba(210, 225, 240, 0.9);
-  --label-bg: rgba(210, 225, 240, 0.88);
   --scrollbar-thumb: rgba(15, 23, 42, 0.25);
   --scrollbar-thumb-hover: rgba(15, 23, 42, 0.45);
   --image-filter: grayscale(10%);
 
   --card-border-strong: rgba(15, 23, 42, 0.3);
+  --header-bg: rgba(200, 214, 229, 0.94);
 }
 
 *,
@@ -160,6 +157,16 @@ a {
   padding-top: calc(1.5rem + env(safe-area-inset-top));
   padding-left: calc(2rem + env(safe-area-inset-left));
   padding-right: calc(2rem + env(safe-area-inset-right));
+  /* Transparent over the hero, opaque once you scroll, so headings further down
+     no longer run underneath it. */
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.site-header.is-scrolled {
+  background: var(--header-bg);
+  border-bottom-color: var(--card-border);
 }
 
 .header-inner {
@@ -441,10 +448,11 @@ a {
   max-width: 46ch;
 }
 
-/* ─── CREATIVE BENTO GRID ─── */
+/* ─── PLATFORM FEATURES ─── */
+/* Same flat vocabulary as the product plates: square imagery, an accent
+   keyline, hairline rules, no radius and no shadow. */
 .platform-section {
   padding: 4rem 2rem 8rem;
-  /* products-section supplies the top edge of this stacked block */
   position: relative;
   z-index: 10;
   background: var(--navy-bg);
@@ -464,188 +472,62 @@ a {
   margin-bottom: 3rem;
 }
 
-.bento-grid {
+.feature-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
 }
 
-.bento-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  overflow: hidden;
+.feature {
   display: flex;
   flex-direction: column;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.2);
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-.bento-card:hover {
-  transform: translateY(-6px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(56, 189, 248, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.bento-wide {
-  grid-column: span 8;
-}
-
-.bento-tall {
-  grid-column: span 4;
-}
-
-.bento-full {
-  grid-column: span 12;
-  flex-direction: row;
-  align-items: center;
-}
-
-/* Visual Container */
-.bento-visual {
-  flex: 1;
-  min-height: 250px;
+.feature-visual {
   position: relative;
-  border-bottom: 1px solid var(--card-border);
+  height: 210px;
+  border: 1px solid var(--card-border);
   overflow: hidden;
 }
 
-.bento-full .bento-visual {
-  border-bottom: none;
-  border-left: 1px solid var(--card-border);
-  min-height: 300px;
-}
-
-/* ─── UI BACKGROUND IMAGES (No Tint) ─── */
 .bg-map {
-  background: url('nord-norge-sat.jpg') center/cover;
+  background: url('images/nord-norge-sat.jpg') center/cover;
 }
 
 .bg-route {
-  /* Cropped from satelitt.jpg. The original is a chart export whose white
-     title bar, margins and legend box showed through this narrow crop. */
-  background: url('satelitt-rute.jpg') center/cover;
+  background: url('images/satelitt-rute.jpg') center/cover;
 }
 
 .bg-scan {
   background: linear-gradient(135deg, rgba(10, 17, 26, 0.6) 0%, rgba(10, 17, 26, 0.2) 100%),
-    url('nvdi.png') center/cover;
+    url('images/nvdi.png') center/cover;
 }
 
-/* Text Content */
-.bento-text {
-  padding: 2.5rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.feature-body {
+  border-top: 2px solid var(--accent-blue);
+  margin-top: 1.5rem;
+  padding-top: 1rem;
 }
 
-.bento-text h3 {
-  font-size: 1.4rem;
-  font-weight: 400;
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.02em;
+.feature:last-child .feature-body {
+  border-top-color: var(--accent-green);
 }
 
-.bento-text p {
-  font-size: 1rem;
+.feature-body h3 {
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.6rem;
+}
+
+.feature-body p {
+  font-size: 0.95rem;
   color: var(--text-muted);
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
-/* ─── MICRO UI MOCKUPS ─── */
-
-/* 1. Map Mockup */
-.ui-mockup-map {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.herd-dot {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: var(--accent-blue);
-  border-radius: 50%;
-  box-shadow: 0 0 10px var(--accent-blue);
-  animation: pulse-dot 2s infinite;
-}
-
-.d1 {
-  top: 30%;
-  left: 40%;
-  animation-delay: 0s;
-}
-
-.d2 {
-  top: 45%;
-  left: 60%;
-  animation-delay: 0.5s;
-}
-
-.d3 {
-  top: 70%;
-  left: 35%;
-  animation-delay: 1s;
-}
-
-.ui-status-pill {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  background: var(--pill-bg);
-  border: 1px solid var(--card-border);
-  padding: 0.5rem 1rem;
-  border-radius: 100px;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-main);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-.live-indicator {
-  width: 6px;
-  height: 6px;
-  background: var(--accent-green);
-  border-radius: 50%;
-  animation: pulse-dot 1.5s infinite;
-}
-
-@keyframes pulse-dot {
-  0% {
-    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4);
-  }
-
-  70% {
-    box-shadow: 0 0 0 10px rgba(56, 189, 248, 0);
-  }
-
-  100% {
-    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
-  }
-}
-
-/* 3. NDVI Scan Mockup */
-.ui-mockup-scan {
-  /* Absolute, not height:100%. The parent only sets min-height, so a
-     percentage height collapses to the data card and the scan covers a third
-     of the image instead of all of it. */
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
+/* Scanning pass over the NDVI imagery */
 .scan-gradient {
   position: absolute;
   inset: 0;
@@ -663,37 +545,6 @@ a {
   background: linear-gradient(90deg, transparent, var(--text-main), transparent);
   box-shadow: 0 0 10px var(--text-main);
   animation: scan-up-down 4s ease-in-out infinite alternate;
-}
-
-.scan-data-card {
-  position: relative;
-  z-index: 2;
-  background: var(--scan-card-bg);
-  border: 1px solid var(--card-border);
-  padding: 1.5rem;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 240px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.data-row {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-}
-
-.val-green {
-  color: var(--accent-green);
-}
-
-.val-blue {
-  color: var(--accent-blue);
 }
 
 @keyframes scan-up-down {
@@ -745,7 +596,6 @@ a {
 
 .content-visual {
   width: 100%;
-  border-radius: var(--card-radius);
   overflow: hidden;
   border: 1px solid var(--card-border);
   display: flex;
@@ -763,6 +613,85 @@ a {
 .content-visual:hover .mission-image {
   filter: grayscale(0%);
   transform: scale(1.02);
+}
+
+/* ─── CONTACT ─── */
+.contact-section {
+  padding: 4rem 2rem 6rem;
+  position: relative;
+  z-index: 10;
+  background: var(--navy-bg);
+  padding-left: calc(2rem + env(safe-area-inset-left));
+  padding-right: calc(2rem + env(safe-area-inset-right));
+}
+
+.contact-split {
+  border-top: 1px solid var(--card-border);
+  padding-top: 3rem;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.contact-heading {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+}
+
+.contact-lead {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 46ch;
+  margin-bottom: 2rem;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.contact-or {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.contact-facts {
+  margin: 0;
+}
+
+.contact-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.contact-row:first-child {
+  border-top: 1px solid var(--card-border);
+}
+
+.contact-facts dt {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.contact-facts dd {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 300;
+  text-align: right;
 }
 
 /* ─── TEAM SECTION ─── */
@@ -794,13 +723,10 @@ a {
 }
 
 .team-card {
-  padding: 2rem;
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
+  border-top: 1px solid var(--card-border);
+  padding-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  transition: 0.3s;
 }
 
 .team-card:hover {
@@ -812,7 +738,6 @@ a {
 .team-avatar-wrapper {
   width: 4.5rem;
   height: 4.5rem;
-  border-radius: 50%;
   overflow: hidden;
   margin-bottom: 1.5rem;
   border: 1px solid var(--card-border);
@@ -892,20 +817,14 @@ a {
     display: none;
   }
 
-  .bento-wide,
-  .bento-tall,
-  .bento-full {
-    grid-column: span 12;
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
-  .bento-full {
-    flex-direction: column;
-  }
-
-  .bento-full .bento-visual {
-    border-left: none;
-    border-top: 1px solid var(--card-border);
-    width: 100%;
+  .contact-split {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
   .content-split {
@@ -940,9 +859,7 @@ a {
      what is behind it on every frame, which stutters badly while scrolling. */
   .nav-glass,
   .theme-toggle-btn,
-  .btn-secondary,
-  .ui-status-pill,
-  .scan-data-card {
+  .btn-secondary {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }

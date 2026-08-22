@@ -1,6 +1,6 @@
 # SpaceHerd: Satellite Intelligence for Arctic Herds
 
-![SpaceHerd](satelitt.jpg)
+![SpaceHerd](images/satelitt.jpg)
 
 **SpaceHerd** is an advanced satellite telemetry and landscape intelligence platform designed for modern herd management in the Arctic. By leveraging Earth observation data (Copernicus / Sentinel) and predictive analytics, SpaceHerd provides herders with real-time herd tracking, forage quality assessment, and movement predictions without requiring physical collars on every animal.
 
@@ -40,10 +40,15 @@ SpaceHerd sells two separate products. Both work from Earth-observation imagery,
 ├── particles.js        # Dynamic background & telemetry particle systems
 ├── telemetry.js        # Orbital telemetry & satellite signal calculations
 ├── map.js              # Geospatial map visualizers & layer controls
-├── reinsdyr.jpg        # Hero imagery
-├── satelitt.jpg        # Satellite imagery asset
-├── nvdi.png            # Vegetation index visualization asset
-└── nord-norge-sat.jpg  # Earth observation satellite overview asset
+└── images/             # All photography and imagery
+    ├── Georg.jpg           # Team portrait
+    ├── Per.jpg             # Team portrait
+    ├── Sara.jpg            # Team portrait
+    ├── reinsdyr.jpg        # Hero imagery
+    ├── satelitt.jpg        # Satellite imagery asset
+    ├── satelitt-rute.jpg   # Route map crop used by the platform section
+    ├── nvdi.png            # Vegetation index visualization asset
+    └── nord-norge-sat.jpg  # Earth observation satellite overview asset
 ```
 
 ---

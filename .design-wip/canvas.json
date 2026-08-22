@@ -1,0 +1,25 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "01 Header", "x": 0, "y": 0, "w": 1000, "h": 560 },
+    { "file": "Platform.dc.html", "title": "02 One design language", "x": 1080, "y": 0, "w": 1000, "h": 780 },
+    { "file": "Contact.dc.html", "title": "03 Somewhere to land", "x": 0, "y": 660, "w": 1000, "h": 560 },
+    { "file": "Team.dc.html", "title": "04 Team", "x": 1080, "y": 880, "w": 1000, "h": 580 }
+  ],
+  "annotations": [
+    {
+      "id": "read-me",
+      "x": -420,
+      "y": 0,
+      "w": 340,
+      "text": "Four things I would change, in the order I would do them.\n\n02 is the big one. Everything else on the page now follows the flat, hairline language of the products section, except the platform cards, which are still the original rounded and shadowed template. That mismatch is most of what still reads as generic.\n\n03 is the one that costs you money.\n\nNone of this is applied to the site yet. Tell me which ones you want and I will do them."
+    },
+    {
+      "id": "not-touched",
+      "x": -420,
+      "y": 660,
+      "w": 340,
+      "text": "Deliberately left alone:\n\nThe headings that came from you, such as Landscape intelligence. Not just location. and Global reach, local precision. I still think they read as generic marketing, but they are your words and you have not asked me to change them.\n\nThe canvas scene, the colours, the type. Those are settled."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+    a { color: #38BDF8; }
+    a:hover { color: #7DD3FC; }
+  </style>
+</helmet>
+
+<div style="width: 1000px; height: 560px; box-sizing: border-box; background: #060B11; color: #FFFFFF; padding: 40px; display: flex; flex-direction: column; gap: 22px;">
+
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #38BDF8;">FIX 01</div>
+    <div style="font-size: 24px; font-weight: 500; letter-spacing: -0.02em;">The header has no backdrop</div>
+    <div style="font-size: 14px; font-weight: 300; line-height: 1.6; color: #8B949E; max-width: 680px;">It is fixed and fully transparent, so every heading you scroll past runs straight through it. Giving it a background only after the page leaves the top keeps the hero clean and stops the collision everywhere else.</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; flex-grow: 1;">
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: #8B949E;">NOW</div>
+      <div style="position: relative; flex-grow: 1; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; background: #0A111A;">
+        <div style="position: absolute; inset: 0; padding: 54px 20px 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 26px; font-weight: 500; letter-spacing: -0.02em; color: #FFFFFF;">SpaceSheep</div>
+          <div style="font-size: 12px; color: #8B949E;">Sheep farming</div>
+          <div style="height: 84px; border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; background: #10161F;"></div>
+        </div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box;">
+          <div style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">SpaceHerd</div>
+          <div style="font-size: 12px; color: #8B949E;">Contact</div>
+        </div>
+      </div>
+      <div style="font-size: 12px; font-weight: 300; line-height: 1.5; color: #8B949E;">Brand and heading overlap. Nothing separates the bar from the page.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: #34D399;">PROPOSED</div>
+      <div style="position: relative; flex-grow: 1; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; background: #0A111A;">
+        <div style="position: absolute; inset: 0; padding: 58px 20px 0; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 26px; font-weight: 500; letter-spacing: -0.02em; color: #FFFFFF;">SpaceSheep</div>
+          <div style="font-size: 12px; color: #8B949E;">Sheep farming</div>
+          <div style="height: 80px; border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; background: #10161F;"></div>
+        </div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; background: rgba(6,11,17,0.92); border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <div style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">SpaceHerd</div>
+          <div style="font-size: 12px; color: #8B949E;">Contact</div>
+        </div>
+      </div>
+      <div style="font-size: 12px; font-weight: 300; line-height: 1.5; color: #8B949E;">A flat tint plus the same hairline the rest of the page uses. No blur, so it costs nothing on a phone.</div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

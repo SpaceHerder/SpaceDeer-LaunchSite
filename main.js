@@ -54,8 +54,13 @@
       });
     });
 
+    // Header backdrop: transparent over the hero, opaque once the page moves
+    const header = document.querySelector('.site-header');
+
     // Update Active Nav State on Scroll
     window.addEventListener('scroll', () => {
+      if (header) header.classList.toggle('is-scrolled', window.scrollY > 40);
+
       let current = '';
       const sections = document.querySelectorAll('main, section');
 

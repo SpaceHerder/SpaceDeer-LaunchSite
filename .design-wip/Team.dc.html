@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+    a { color: #38BDF8; }
+    a:hover { color: #7DD3FC; }
+  </style>
+</helmet>
+
+<div style="width: 1000px; height: 580px; box-sizing: border-box; background: #060B11; color: #FFFFFF; padding: 40px; display: flex; flex-direction: column; gap: 22px;">
+
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #38BDF8;">FIX 04</div>
+    <div style="font-size: 24px; font-weight: 500; letter-spacing: -0.02em;">The team photos are strangers</div>
+    <div style="font-size: 14px; font-weight: 300; line-height: 1.6; color: #8B949E; max-width: 720px;">Three named founders are illustrated with stock portraits of people who are not them, pulled from Unsplash. On a page whose whole argument is that you measure real ground rather than guess at it, that is the one thing a visitor might actually catch. Initials are honest and cost nothing until you have real photographs.</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: #34D399;">PROPOSED</div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px;">
+
+      <div style="display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+        <div style="width: 62px; height: 62px; border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.06em; color: #FFFFFF; margin-bottom: 18px;">PCS</div>
+        <div style="font-size: 15px; font-weight: 500; letter-spacing: -0.01em;">Per Christian Wahl Schj&oslash;lberg</div>
+        <div style="font-size: 12px; font-weight: 300; color: #38BDF8; margin-top: 5px;">CEO and product lead</div>
+        <div style="font-size: 12px; font-weight: 300; line-height: 1.6; color: #8B949E; margin-top: 11px;">S&aacute;mi entrepreneur from Senja. Knows reindeer husbandry and open rangeland sheep farming from the inside.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+        <div style="width: 62px; height: 62px; border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.06em; color: #FFFFFF; margin-bottom: 18px;">GR</div>
+        <div style="font-size: 15px; font-weight: 500; letter-spacing: -0.01em;">Georg Ris&oslash;y</div>
+        <div style="font-size: 12px; font-weight: 300; color: #38BDF8; margin-top: 5px;">CTO</div>
+        <div style="font-size: 12px; font-weight: 300; line-height: 1.6; color: #8B949E; margin-top: 11px;">Builds the cloud infrastructure, the satellite data processing and the platform underneath it.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+        <div style="width: 62px; height: 62px; border: 1px solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: 0.06em; color: #FFFFFF; margin-bottom: 18px;">SJB</div>
+        <div style="font-size: 15px; font-weight: 500; letter-spacing: -0.01em;">Sara Julia Bajardo</div>
+        <div style="font-size: 12px; font-weight: 300; color: #38BDF8; margin-top: 5px;">GIS and data engineer</div>
+        <div style="font-size: 12px; font-weight: 300; line-height: 1.6; color: #8B949E; margin-top: 11px;">Turns Earth observation data into maps you can act on. Leads the geospatial analysis.</div>
+      </div>
+
+    </div>
+
+    <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 24px; padding-top: 16px; display: flex; gap: 40px;">
+      <div style="flex-grow: 1;">
+        <div style="font-size: 12px; font-weight: 400; color: #8B949E; margin-bottom: 7px;">Also worth a look</div>
+        <div style="font-size: 12px; font-weight: 300; line-height: 1.65; color: #8B949E;">The card boxes are gone here too, for the same reason as the platform cards. A hairline above each person and real spacing does the grouping, which matches the products section and the datasheet rows.</div>
+      </div>
+      <div style="width: 260px;">
+        <div style="font-size: 12px; font-weight: 400; color: #8B949E; margin-bottom: 7px;">When you have photographs</div>
+        <div style="font-size: 12px; font-weight: 300; line-height: 1.65; color: #8B949E;">Drop them straight into the same 62px square. Nothing else needs to change.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

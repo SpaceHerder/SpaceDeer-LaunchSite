@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; }
+    a { color: #38BDF8; }
+    a:hover { color: #7DD3FC; }
+  </style>
+</helmet>
+
+<div style="width: 1000px; height: 560px; box-sizing: border-box; background: #060B11; color: #FFFFFF; padding: 40px; display: flex; flex-direction: column; gap: 24px;">
+
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #38BDF8;">FIX 03</div>
+    <div style="font-size: 24px; font-weight: 500; letter-spacing: -0.02em;">Request Demo goes nowhere</div>
+    <div style="font-size: 14px; font-weight: 300; line-height: 1.6; color: #8B949E; max-width: 720px;">Your only call to action points at #contact, which is the footer: a copyright line and a city name. Someone who wants the thing you are selling scrolls the whole page, clicks, and lands on nothing. That is the most expensive problem on the site.</div>
+  </div>
+
+  <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 26px; display: grid; grid-template-columns: 1.15fr 1fr; gap: 48px; flex-grow: 1;">
+
+    <div style="display: flex; flex-direction: column; gap: 18px;">
+      <div style="font-size: 34px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.15;">Bring us your<br>grazing district.</div>
+      <div style="font-size: 15px; font-weight: 300; line-height: 1.65; color: #8B949E; max-width: 42ch;">Tell us where your animals range and which season is hardest. We will show you the last twelve months of that ground read from orbit, and you can judge it against what you already know.</div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px;">
+        <div style="padding: 13px 26px; border-radius: 100px; background: linear-gradient(135deg, #FFFFFF 0%, #E0E5EA 100%); color: #060B11; font-size: 14px; font-weight: 600;">Request a demo</div>
+        <div style="font-size: 13px; font-weight: 300; color: #8B949E;">or write to
+          <span style="color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.3);">operations@spaceherd.no</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <span style="font-size: 13px; font-weight: 400; color: #8B949E;">Email</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">operations@spaceherd.no</span>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <span style="font-size: 13px; font-weight: 400; color: #8B949E;">Where we are</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">Troms&oslash;, Norway</span>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <span style="font-size: 13px; font-weight: 400; color: #8B949E;">Phone</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8B949E;">[YOUR NUMBER]</span>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <span style="font-size: 13px; font-weight: 400; color: #8B949E;">Backed by</span>
+        <span style="font-size: 13px; font-weight: 300; text-align: right;">Norinnova, Arctic Ignite</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 300; line-height: 1.55; color: #8B949E; margin-top: 18px;">Square brackets are for you to fill in. I have not invented a number.</div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
