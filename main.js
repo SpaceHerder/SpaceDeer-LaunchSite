@@ -78,9 +78,9 @@
       });
     });
 
-    // Theme Switcher Logic
+    // Theme Switcher Logic (Dark mode default)
     const themeToggleBtn = document.getElementById('theme-toggle');
-    const getSavedTheme = () => localStorage.getItem('spaceherder-theme') || localStorage.getItem('spaceherd-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    const getSavedTheme = () => localStorage.getItem('spaceherder-theme') || localStorage.getItem('spaceherd-theme') || 'dark';
     
     const setTheme = (theme) => {
       document.documentElement.setAttribute('data-theme', theme);
@@ -88,7 +88,7 @@
       window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
     };
 
-    // Initialize saved or preferred theme
+    // Initialize saved theme (defaults to dark)
     setTheme(getSavedTheme());
 
     if (themeToggleBtn) {
