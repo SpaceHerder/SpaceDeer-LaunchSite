@@ -1,10 +1,10 @@
-# SpaceHerd: Satellite Intelligence for Arctic Herds
+# SpaceHerder: Satellite Intelligence for Arctic Herds
 
-![SpaceHerd](images/satelitt.jpg)
+![SpaceHerder](images/satelitt.jpg)
 
-**SpaceHerd** is an advanced satellite telemetry and landscape intelligence platform designed for modern herd management in the Arctic. By leveraging Earth observation data (Copernicus / Sentinel) and predictive analytics, SpaceHerd provides herders with real-time herd tracking, forage quality assessment, and movement predictions without requiring physical collars on every animal.
+**SpaceHerder** is an advanced satellite telemetry and landscape intelligence platform designed for modern herd management in the Arctic. By leveraging Earth observation data (Copernicus / Sentinel) and predictive analytics, SpaceHerder provides herders with real-time herd tracking, forage quality assessment, and movement predictions without requiring physical collars on every animal.
 
-SpaceHerd sells two separate products. Both work from Earth-observation imagery, but each is its own tool:
+SpaceHerder sells two separate products. Both work from Earth-observation imagery, but each is its own tool:
 
 | Product | For | Focus |
 | --- | --- | --- |
@@ -56,4 +56,4 @@ SpaceHerd sells two separate products. Both work from Earth-observation imagery,
 ## Contact & Organization
 
 - **Location**: Tromsø, Norway
-- **Copyright**: © 2026 SpaceHerd. All rights reserved.
+- **Copyright**: © 2026 SpaceHerder. All rights reserved.

@@ -80,11 +80,11 @@
 
     // Theme Switcher Logic
     const themeToggleBtn = document.getElementById('theme-toggle');
-    const getSavedTheme = () => localStorage.getItem('spaceherd-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    const getSavedTheme = () => localStorage.getItem('spaceherder-theme') || localStorage.getItem('spaceherd-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
     
     const setTheme = (theme) => {
       document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('spaceherd-theme', theme);
+      localStorage.setItem('spaceherder-theme', theme);
       window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
     };
 

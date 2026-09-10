@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   SPACEHERD — Arctic Pastoral Background v4
+   SPACEHERDER — Arctic Pastoral Background v4
    Natural agriculture feel: rolling tundra, grazing reindeer and sheep,
    gentle snowfall, aurora, warm earthy palette
    ═══════════════════════════════════════════════════════════ */
