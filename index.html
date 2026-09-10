@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
   <meta charset="UTF-8" />
@@ -7,10 +7,21 @@
   <title>SpaceHerder | Orbital Telemetry</title>
   <meta name="description" content="Precision satellite tracking and landscape intelligence for reindeer and sheep husbandry. SpaceDeer and SpaceSheep, from SpaceHerder." />
 
+  <script>
+    (function () {
+      const saved = localStorage.getItem('spaceherder-theme') || localStorage.getItem('spaceherd-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
     rel="stylesheet" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -47,16 +58,16 @@
   </header>
 
   <main class="hero" id="hero">
-    <div class="hero-content fade-up">
-      <h1 class="hero-title">Track every herd<br>from space.</h1>
-      <p class="hero-subtitle">See where your animals are and what they are grazing, without putting a collar on
-        every one.</p>
-
-      <div class="hero-actions">
-        <a href="#contact" class="btn-primary">Request Demo</a>
-        <a href="#products" class="btn-secondary">See the products</a>
-      </div>
+    <div class="hero-content">
+      <h1 class="hero-title sr-only">SpaceHerder</h1>
     </div>
+
+    <a href="#products" class="hero-scroll" aria-label="Scroll to explore">
+      <svg class="hero-scroll-arrow" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <polyline points="19 12 12 19 5 12"></polyline>
+      </svg>
+    </a>
   </main>
 
 

@@ -321,6 +321,9 @@
     // Distant mountains
     drawMountains(light);
 
+    // Title naturally contoured along the mountain ridge
+    drawBrandOnRidge(light);
+
     // Layer 0 — far pasture
     drawHillFill(0);
     drawGrassTexture(0, light);
@@ -550,6 +553,59 @@
     ctx.fill(cache.mountain);
     ctx.fillStyle = light ? 'rgba(255, 255, 255, 0.7)' : 'rgba(200, 210, 220, 0.08)';
     ctx.fill(cache.caps);
+  }
+
+  /* ─── BRAND TITLE NATURALLY FLOWING ALONG MOUNTAIN RIDGE ─── */
+  function drawBrandOnRidge(light) {
+    const scrollY = window.scrollY || 0;
+    const scrollAlpha = Math.max(0, 1 - scrollY / (H * 0.45));
+    if (scrollAlpha <= 0.01) return;
+
+    ctx.save();
+    ctx.globalAlpha = scrollAlpha;
+
+    const chars = 'SPACEHERDER'.split('');
+    const small = W < 768;
+    const fontSize = Math.max(16, Math.min(50, W * (small ? 0.052 : 0.04)));
+    const letterSpacing = fontSize * (small ? 1.45 : 1.7);
+    const totalW = (chars.length - 1) * letterSpacing;
+    const startX = (W - totalW) / 2;
+
+    ctx.font = `300 ${Math.round(fontSize)}px "Inter", system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+
+    if (!light) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.shadowColor = 'rgba(6, 11, 17, 0.65)';
+      ctx.shadowBlur = 14;
+      ctx.shadowOffsetY = 2;
+    } else {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 1;
+    }
+
+    const yOffset = fontSize * 0.22;
+
+    for (let i = 0; i < chars.length; i++) {
+      const cx = startX + i * letterSpacing;
+      const cy = mountainY(cx) - yOffset;
+
+      // Calculate tangent slope along the actual mountain curve
+      const dx = 4;
+      const dy = mountainY(cx + dx) - mountainY(cx - dx);
+      const angle = Math.atan2(dy, dx * 2);
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+      ctx.fillText(chars[i], 0, 0);
+      ctx.restore();
+    }
+
+    ctx.restore();
   }
 
   /* ─── HILL / PASTURE FILL ─── */
