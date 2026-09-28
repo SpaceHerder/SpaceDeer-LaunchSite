@@ -836,6 +836,22 @@ a {
   margin-top: auto;
 }
 
+.team-email {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-blue);
+  text-decoration: none;
+  margin-top: 0.75rem;
+  display: inline-block;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.85;
+}
+
+.team-email:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
 /* ─── LOGO THEME SWITCHING ─── */
 .logo-dark-theme {
   display: block !important;
